@@ -1,0 +1,11 @@
+{
+    "library_name": "topology_lib_tftp",
+    "author": "maria alas",
+    "email": "maria.alas@hpe.com",
+    "repo_url": "git@github.com:maralas/topology_lib_tftp.git",
+    "doc_url": "git@github.com:maralas/topology_lib_tftp.git/tree/master/doc",
+    "project_name": "tftp",
+    "short_description": "This library will have tftp functions in bash",
+    "year": "2016",
+    "version": "0.1.0"
+}
