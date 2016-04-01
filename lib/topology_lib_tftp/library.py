@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2016 maria alas
+# Copyright (C) 2016 Maria Alas
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 # under the License.
 
 """
-topology_lib_tftp communication library implementation.
+topology_lib_transfer_files communication library implementation.
 """
 
 from __future__ import unicode_literals, absolute_import
@@ -25,32 +25,59 @@ from __future__ import print_function, division
 # Add your library functions here.
 
 
-def your_function_here(enode, your_param, shell=None):
+def send_tftp_command(enode, remote_host, c, four=False, six=False,
+                      l=False, m=False, r=False, v=False,
+                      shell='bash'):
     """
-    Document your function here.
+    This function will execute TFTP command in bash.
 
-    :param topology.platforms.base.BaseNode enode: Engine node to communicate
-     with.
-    :param bool your_param: This is an example parameter, read the comment
-     below.
-    :param str shell: Shell name to execute commands.
+      -four: -4, Connect with IPv4 only, even if IPv6 support was compiled in.
+
+      -six: -6 Connect with IPv6 only, if compiled in.
+
+      -c: -c command
+              Execute  command  as  if it had been entered on the tftp prompt.
+              Must be specified last on the command line.
+
+      -l: -l  Default to literal mode. Used to avoid special processing of ':'
+              in a file name.
+
+      -m: -m mode
+              Set  the  default  transfer  mode to mode.  This is usually used
+              with -c.
+
+      -r: -R port:port
+              Force the originating port number to be in the  specified  range
+              of port numbers.
+
+       -v: -v     Default to verbose mode.
     """
     pass
 
-    # Usually, the library functions use the parameters to build a command that
-    # is to be sent to the enode, for example:
+    # This function will execute TFTP command in bash:
     #
-    # command = 'echo "something"'
-    # if your_param:
-    #     command = '{command} "and something else"'.format(command=command)
+    # command = 'tftp {host_ip} -c get file.txt file.txt
     #
-    # Then, the enode is used to send the command:
-    #
-    # enode('the command to be sent', shell=shell)
+
+    arguments = locals()
+
+    required_arg = ['remote_host', 'c']
+
+    optional_arg = {'v': '-v', 'four': '-4', 'six': '-6',
+                    'l': '-l', 'm': '-m', 'r': '-R', 'v': '-v'}
+
+    options = ''
+    command = remote_host
+
+    for key, value in list(arguments.items()):
+        if value is True:
+            options = '{0}{1} '.format(options, optional_arg.get(key))
+
+    tftp_cmd = 'tftp {0}{1} -c {2}'.format(options, command, c)
+    tftp_response = enode(tftp_cmd, shell=shell)
+    assert tftp_response is '', 'unexpected response {0}'.format(tftp_response)
+
 
 __all__ = [
-    # The Topology framework loads the functions that are in this list to be
-    # used as libraries, so, if you want your function to be loaded, add it
-    # here.
-    'your_function_here'
+    'send_tftp_command'
 ]
