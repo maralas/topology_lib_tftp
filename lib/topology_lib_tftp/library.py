@@ -88,8 +88,9 @@ def send_tftp_command(enode, remote_host, c, four=False, six=False,
                 r"\[\d+\]\s(?P<pid>\d+)"
         )
         re_result = re.match(tftp_re, tftp_response)
+        re_result = re.findall(tftp_re, tftp_response)
         assert re_result
-        result = re_result.groupdict()
+        result = re_result[0]
         return result
     else:
         assert tftp_response is '',\
