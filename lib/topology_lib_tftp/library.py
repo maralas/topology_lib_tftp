@@ -22,11 +22,12 @@ topology_lib_transfer_files communication library implementation.
 from __future__ import unicode_literals, absolute_import
 from __future__ import print_function, division
 
+import re
 # Add your library functions here.
 
 
 def send_tftp_command(enode, remote_host, c, four=False, six=False,
-                      l=False, m=False, r=False, v=False,
+                      l=False, m=False, r=False, v=False, background=False,
                       shell='bash'):
     """
     This function will execute TFTP command in bash.
@@ -51,6 +52,8 @@ def send_tftp_command(enode, remote_host, c, four=False, six=False,
               of port numbers.
 
        -v: -v     Default to verbose mode.
+
+       -background: & Run command in the background
     """
     pass
 
@@ -70,12 +73,27 @@ def send_tftp_command(enode, remote_host, c, four=False, six=False,
     command = remote_host
 
     for key, value in list(arguments.items()):
-        if value is True:
+        if value is True and key is not 'background':
             options = '{0}{1} '.format(options, optional_arg.get(key))
 
     tftp_cmd = 'tftp {0}{1} -c {2}'.format(options, command, c)
+
+    if background:
+        tftp_cmd = tftp_cmd + ' &'
+
     tftp_response = enode(tftp_cmd, shell=shell)
-    assert tftp_response is '', 'unexpected response {0}'.format(tftp_response)
+
+    if background:
+        tftp_re = (
+                r"\[\d+\]\s(?P<pid>\d+)"
+        )
+        re_result = re.match(tftp_re, tftp_response)
+        assert re_result
+        result = re_result.groupdict()
+        return result
+    else:
+        assert tftp_response is '',\
+                                'unexpected response {0}'.format(tftp_response)
 
 
 __all__ = [
