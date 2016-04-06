@@ -27,7 +27,7 @@ import re
 
 
 def send_tftp_command(enode, remote_host, c, four=False, six=False,
-                      l=False, m=False, r=False, v=False, background=False,
+                      l=False, m=None, r=False, v=False, background=False,
                       shell='bash'):
     """
     This function will execute TFTP command in bash.
@@ -73,8 +73,13 @@ def send_tftp_command(enode, remote_host, c, four=False, six=False,
     command = remote_host
 
     for key, value in list(arguments.items()):
-        if value is True and key is not 'background':
-            options = '{0}{1} '.format(options, optional_arg.get(key))
+        if key in optional_arg:
+            if value is True and key is not 'background':
+                options = '{0}{1} '.format(options, optional_arg.get(key))
+            elif value is not False and value is not None:
+                options = '{0}{1} {2} '.format(options,
+                                               optional_arg.get(key),
+                                               value)
 
     tftp_cmd = 'tftp {0}{1} -c {2}'.format(options, command, c)
 
